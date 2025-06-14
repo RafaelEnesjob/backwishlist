@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:4.4
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-data:/var/lib/mongodb
+    mem_limit: 500m
+    cpus: 0.5
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    depends_on:
+      - mongo
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+    mem_limit: 200m
+    cpus: 0.25
