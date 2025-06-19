@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      database: vehicles
+      database: wishlistdb
       auto-index-creation: true
-      uri: "mongodb://localhost:27017/vehicles?serverSelectionTimeoutMS=1000&connectTimeoutMS=1000"
+      uri: "mongodb://localhost:27017/wishlist?serverSelectionTimeoutMS=1000&connectTimeoutMS=1000"
 server:
   port: 8080
