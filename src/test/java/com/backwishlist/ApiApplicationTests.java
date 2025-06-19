@@ -1,4 +1,4 @@
-package com.backwishlist.api;
+package com.backwishlist;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
