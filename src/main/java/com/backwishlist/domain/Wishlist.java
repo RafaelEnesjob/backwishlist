@@ -5,60 +5,89 @@ import com.backwishlist.domain.exceptions.ProductNotFoundException;
 import com.backwishlist.domain.exceptions.WishlistLimitExceededException;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Wishlist {
 
     private static final int MAX_PRODUCTS = 20;
 
+    private String id;
     private String customerId;
     private List<Product> products;
+    private Instant createdAt;
+    private Instant updatedAt;
 
-    public static Wishlist create(final String clientId) {
-        return new Wishlist(clientId, new ArrayList<>());
+    public List<Product> getProducts() {
+        if (Objects.isNull(products)) {
+            return new ArrayList<>();
+        }
+        return products;
     }
 
-    public void addProduct(final Product product) {
-        validateProductLimit();
-        validateProductNotExists(product);
-        products.add(product);
+    public static Wishlist of(final String customerId, final Product product) {
+        return new Wishlist(null, customerId, List.of(product), null, null);
     }
 
-    public void removeProduct(final String productId) {
-        Product productToRemove = findProductById(productId);
-        products.remove(productToRemove);
+    public boolean isEmpty() {
+        return this.getProducts().isEmpty();
+    }
+
+    public boolean canAddMoreProducts() {
+        return products.size() < MAX_PRODUCTS;
+    }
+
+    public boolean containsProduct(final Product product) {
+        return products.stream()
+                .anyMatch(p -> p.getId().equals(product.getId()));
     }
 
     public boolean containsProduct(final String productId) {
-        return products.stream().anyMatch(p -> p.getId().equals(productId));
+        return products.stream()
+                .anyMatch(p -> productId.equals(p.getId()));
     }
 
-    public List<Product> listProducts() {
-        return Collections.unmodifiableList(products);
-    }
+    public Wishlist addProduct(final Product product) {
 
-    private void validateProductLimit() {
-        if (products.size() >= MAX_PRODUCTS) {
-            throw new WishlistLimitExceededException(MAX_PRODUCTS);
-        }
-    }
-
-    private void validateProductNotExists(Product product) {
-        if (products.stream().anyMatch(p -> p.getId().equals(product.getId()))) {
+        if (this.containsProduct(product)) {
             throw new ProductAlreadyExistsException(product.getId());
         }
+
+        if (Boolean.FALSE.equals(this.canAddMoreProducts())) {
+            throw new WishlistLimitExceededException(this.customerId);
+        }
+
+        final List<Product> productUpdate = new ArrayList<>(this.products);
+        productUpdate.add(product);
+
+        return new Wishlist(
+                this.id,
+                this.customerId,
+                productUpdate,
+                this.createdAt,
+                this.updatedAt
+        );
     }
 
-    private Product findProductById(String productId) {
-        return products.stream()
-                .filter(p -> p.getId().equals(productId))
-                .findFirst()
-                .orElseThrow(() -> new ProductNotFoundException(productId));
-    }
+    public Wishlist removeProduct(final String productId) {
+        final boolean productRemoved = this.getProducts().removeIf(product -> product.getId().equals(productId));
 
+        if (productRemoved) {
+            return new Wishlist(
+                    this.id,
+                    this.customerId,
+                    products,
+                    this.createdAt,
+                    this.updatedAt
+            );
+        }
+
+        throw new ProductNotFoundException(productId);
+    }
 }

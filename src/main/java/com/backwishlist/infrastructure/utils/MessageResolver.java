@@ -9,15 +9,15 @@ public class MessageResolver {
 
     private static MessageSource messageSource;
 
-    public MessageResolver(MessageSource messageSource) {
+    public MessageResolver(final MessageSource messageSource) {
         MessageResolver.messageSource = messageSource;
     }
 
-    public static String get(String code, Object... args) {
+    public static String get(final String code, Object... args) {
         return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
     }
 
-    public static String get(String code) {
+    public static String get(final String code) {
         return get(code, null);
     }
 

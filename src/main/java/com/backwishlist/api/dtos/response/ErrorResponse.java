@@ -8,25 +8,21 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 
-@Getter
-@Builder
-public class ErrorResponse {
-
-    private final int status;
-    private final String error;
-    private final String message;
-    private final String path;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private final LocalDateTime timestamp;
-
+public record ErrorResponse(
+        int status,
+        String error,
+        String message,
+        String path,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        LocalDateTime timestamp
+) {
     public static ErrorResponse of(HttpStatus status, String message, String path) {
-        return ErrorResponse.builder()
-                .status(status.value())
-                .error(status.getReasonPhrase())
-                .message(message)
-                .path(path)
-                .timestamp(LocalDateTime.now())
-                .build();
+        return new ErrorResponse(
+                status.value(),
+                status.getReasonPhrase(),
+                message,
+                path,
+                LocalDateTime.now()
+        );
     }
 }

@@ -18,8 +18,10 @@ import java.util.List;
 public class WishlistDocument {
 
     @Id
+    private String id;
+    @Indexed(unique = true)
     private String customerId;
-    private List<ProductDocument> productDocuments;
+    private List<ProductDocument> products;
     @CreatedDate
     private Instant createdAt;
     @LastModifiedDate
