@@ -31,7 +31,7 @@ public class Wishlist {
         return products;
     }
 
-    public static Wishlist of(final String customerId, final Product product) {
+    public static Wishlist create(final String customerId, final Product product) {
         return new Wishlist(null, customerId, List.of(product), null, null);
     }
 

@@ -17,19 +17,18 @@ public class AddProductToWishlistUseCaseImpl implements AddProductToWishlistUseC
 
     @Override
     public void execute(final String customerId, final Product product) {
-        wishlistRepository.findByCustomerId(customerId)
-                .ifPresentOrElse(
-                        wishlist -> {
-                            final Wishlist wishlistUpdate = wishlist.addProduct(product);
-                            wishlistRepository.save(wishlistUpdate);
-                            log.info("Produto adicionado à wishlist do cliente: {}", customerId);
-                        },
-                        () -> {
-                            final Wishlist wishlist = Wishlist.of(customerId, product);
-                            wishlistRepository.save(wishlist);
-                            log.info("Wishlist criada e produto adicionado para o cliente: {}", customerId);
-                        }
-                );
+        Wishlist wishlist = wishlistRepository.findByCustomerId(customerId)
+                .map(existing -> {
+                    Wishlist updated = existing.addProduct(product);
+                    log.info("Produto adicionado à wishlist do cliente: {}", customerId);
+                    return updated;
+                })
+                .orElseGet(() -> {
+                    Wishlist created = Wishlist.create(customerId, product);
+                    log.info("Wishlist criada e produto adicionado para o cliente: {}", customerId);
+                    return created;
+                });
 
+        wishlistRepository.save(wishlist);
     }
 }
