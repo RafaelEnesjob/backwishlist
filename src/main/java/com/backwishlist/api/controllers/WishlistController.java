@@ -5,6 +5,7 @@ import com.backwishlist.api.dtos.response.ErrorResponse;
 import com.backwishlist.api.dtos.response.ProductResponse;
 import com.backwishlist.api.dtos.response.WishlistResponse;
 import com.backwishlist.app.usecases.impl.AddProductToWishlistUseCase;
+import com.backwishlist.app.usecases.impl.CheckProductInWishlistUseCase;
 import com.backwishlist.app.usecases.impl.GetAllProductsFromWishlistUseCase;
 import com.backwishlist.app.usecases.impl.RemoveProductFromWishlistUseCase;
 import com.backwishlist.domain.Product;
@@ -34,6 +35,7 @@ public class WishlistController {
     private final AddProductToWishlistUseCase addProductToWishlistUseCase;
     private final RemoveProductFromWishlistUseCase removeProductFromWishlistUseCase;
     private final GetAllProductsFromWishlistUseCase getAllProductsFromWishlistUseCase;
+    private final CheckProductInWishlistUseCase checkProductInWishlistUseCase;
 
     @Operation(summary = "Add a product to the customer's wishlist")
     @ApiResponses(value = {
@@ -103,6 +105,35 @@ public class WishlistController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{customerId}/products/{productId}")
+    @Operation(summary = "Check and return a specific product from the customer's wishlist")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product found in wishlist"),
+            @ApiResponse(responseCode = "404", description = "Product not found in wishlist or wishlist does not exist", content = @Content)
+    })
+    public ResponseEntity<WishlistResponse> getProductFromWishlist(
+            @PathVariable final String customerId,
+            @PathVariable final String productId
+    ) {
+        Wishlist wishlist = checkProductInWishlistUseCase.execute(customerId, productId);
+
+        return wishlist.getProducts().stream()
+                .filter(p -> p.getId().equals(productId))
+                .findFirst()
+                .map(product -> {
+                    List<ProductResponse> productResponse = List.of(
+                            new ProductResponse(product.getId(), product.getName())
+                    );
+                    WishlistResponse response = new WishlistResponse(
+                            wishlist.getId(),
+                            wishlist.getCustomerId(),
+                            productResponse
+                    );
+                    return ResponseEntity.ok(response);
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
 
