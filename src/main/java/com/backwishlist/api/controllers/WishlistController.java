@@ -2,6 +2,7 @@ package com.backwishlist.api.controllers;
 
 import com.backwishlist.api.dtos.request.ProductRequest;
 import com.backwishlist.app.usecases.impl.AddProductToWishlistUseCase;
+import com.backwishlist.app.usecases.impl.RemoveProductFromWishlistUseCase;
 import com.backwishlist.domain.Product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class WishlistController {
 
     private final AddProductToWishlistUseCase addProductToWishlistUseCase;
+    private final RemoveProductFromWishlistUseCase removeProductFromWishlistUseCase;
 
     @Operation(summary = "Add a product to the customer's wishlist")
     @ApiResponses(value = {
@@ -43,4 +45,21 @@ public class WishlistController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @Operation(summary = "Remove a product from the customer's wishlist")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product removed successfully"),
+            @ApiResponse(responseCode = "404", description = "Wishlist or product not found", content = @Content)
+    })
+    @DeleteMapping("/{customerId}/products/{productId}")
+    public ResponseEntity<Void> removeProductFromWishlist(
+            @PathVariable final String customerId,
+            @PathVariable final String productId
+    ) {
+        removeProductFromWishlistUseCase.execute(customerId, productId);
+        log.info("Produto [{}] removido da wishlist do cliente [{}]", productId, customerId);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
