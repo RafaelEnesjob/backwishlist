@@ -18,7 +18,7 @@ public class RemoveProductFromWishlistUseCaseImpl implements RemoveProductFromWi
 
     @Override
     public void execute(final String customerId, final String productId) {
-        Wishlist wishlist = wishlistRepository.findByCustomerId(customerId)
+        final Wishlist wishlist = wishlistRepository.findByCustomerId(customerId)
                 .orElseThrow(() -> new WishlistNotFoundException(customerId));
 
         if (!wishlist.containsProduct(productId)) {

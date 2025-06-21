@@ -5,7 +5,6 @@ import com.backwishlist.domain.exceptions.ProductAlreadyExistsException;
 import com.backwishlist.domain.exceptions.ProductNotFoundException;
 import com.backwishlist.domain.exceptions.WishlistLimitExceededException;
 import com.backwishlist.domain.exceptions.WishlistNotFoundException;
-import com.backwishlist.infrastructure.utils.MessageResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -43,13 +42,8 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
     }
 
-    private ResponseEntity<ErrorResponse> buildErrorResponse(final HttpStatus status, final String rawMessage, final HttpServletRequest request) {
-        final String[] parts = rawMessage.split("#", 2);
-        final String messageKey = parts[0];
-        Object[] args = parts.length > 1 ? new Object[]{ parts[1] } : null;
-
-        final String resolvedMessage = MessageResolver.get(messageKey, args);
-        final ErrorResponse body = ErrorResponse.of(status, resolvedMessage, request.getRequestURI());
+    private ResponseEntity<ErrorResponse> buildErrorResponse(final HttpStatus status, final String message, final HttpServletRequest request) {
+        final ErrorResponse body = ErrorResponse.of(status, message, request.getRequestURI());
         return ResponseEntity.status(status).body(body);
     }
 
