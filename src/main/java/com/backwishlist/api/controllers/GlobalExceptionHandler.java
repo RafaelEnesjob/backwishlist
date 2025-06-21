@@ -7,14 +7,15 @@ import com.backwishlist.domain.exceptions.WishlistLimitExceededException;
 import com.backwishlist.domain.exceptions.WishlistNotFoundException;
 import com.backwishlist.infrastructure.utils.MessageResolver;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
+public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(ProductAlreadyExistsException.class)
@@ -50,5 +51,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         final String resolvedMessage = MessageResolver.get(messageKey, args);
         final ErrorResponse body = ErrorResponse.of(status, resolvedMessage, request.getRequestURI());
         return ResponseEntity.status(status).body(body);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        String message = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .findFirst()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .orElse("Validation error");
+
+        ErrorResponse body = ErrorResponse.of(
+                HttpStatus.BAD_REQUEST,
+                message,
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.badRequest().body(body);
     }
 }

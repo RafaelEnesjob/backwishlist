@@ -2,10 +2,8 @@ package com.backwishlist.api.dtos.response;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import lombok.Getter;
-
 import org.springframework.http.HttpStatus;
+
 import java.time.LocalDateTime;
 
 public record ErrorResponse(

@@ -20,12 +20,12 @@ public class AddProductToWishlistUseCaseImpl implements AddProductToWishlistUseC
         Wishlist wishlist = wishlistRepository.findByCustomerId(customerId)
                 .map(existing -> {
                     Wishlist updated = existing.addProduct(product);
-                    log.info("Produto adicionado à wishlist do cliente: {}", customerId);
+                    log.info("Product added to customer's wishlist: {}", customerId);
                     return updated;
                 })
                 .orElseGet(() -> {
                     Wishlist created = Wishlist.create(customerId, product);
-                    log.info("Wishlist criada e produto adicionado para o cliente: {}", customerId);
+                    log.info("Wishlist created and product added for customer: {}", customerId);
                     return created;
                 });
 

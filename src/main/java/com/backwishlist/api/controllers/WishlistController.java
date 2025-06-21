@@ -24,11 +24,11 @@ public class WishlistController {
 
     private final AddProductToWishlistUseCase addProductToWishlistUseCase;
 
-    @Operation(summary = "Adiciona um produto na wishlist do cliente")
+    @Operation(summary = "Add a product to the customer's wishlist")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Produto adicionado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Wishlist do cliente não encontrada", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Produto já existe na wishlist ou limite excedido", content = @Content)
+            @ApiResponse(responseCode = "201", description = "Product added successfully"),
+            @ApiResponse(responseCode = "404", description = "Customer Wishlist not found", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Product already exists in wishlist or limit exceeded", content = @Content)
     })
     @PostMapping("/{customerId}/products")
     public ResponseEntity<Void> addProductToWishlist(@PathVariable final String customerId, @Valid @RequestBody final ProductRequest productRequest) {
@@ -39,7 +39,7 @@ public class WishlistController {
 
         addProductToWishlistUseCase.execute(customerId, product);
 
-        log.info("Produto [{} - {}] adicionado na wishlist do cliente [{}]", product.getId(), product.getName(), customerId);
+        log.info("Product [{} - {}] added to customer's wishlist [{}]", product.getId(), product.getName(), customerId);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
