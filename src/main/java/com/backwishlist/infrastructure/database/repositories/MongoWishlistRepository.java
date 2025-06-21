@@ -21,14 +21,14 @@ public class MongoWishlistRepository implements IWishlistRepository {
 
     @Override
     public Optional<Wishlist> findByCustomerId(final String customerId) {
-        log.info("Buscando wishlist do cliente: {}", customerId);
+        log.info("Searching for customer wishlist: {}", customerId);
         return wishListMongoRepository.findByCustomerId(customerId)
                 .map(wishlistInfraMapper::toDomain);
     }
 
     @Override
     public void save(final Wishlist wishlist) {
-        log.info("Persistindo wishlist do cliente: {}", wishlist.getCustomerId());
+        log.info("Persisting customer wishlist: {}", wishlist.getCustomerId());
         var document = wishlistInfraMapper.toDocument(wishlist);
         wishListMongoRepository.save(document);
     }
@@ -41,7 +41,7 @@ public class MongoWishlistRepository implements IWishlistRepository {
 
     @Override
     public void deleteByCustomerId(final String id) {
-        log.info("Removendo wishlist pelo id: {}", id);
+        log.info("Removing wishlist by id: {}", id);
         wishListMongoRepository.deleteById(id);
     }
 }

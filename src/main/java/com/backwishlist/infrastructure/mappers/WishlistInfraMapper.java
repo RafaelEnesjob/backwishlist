@@ -2,26 +2,13 @@ package com.backwishlist.infrastructure.mappers;
 
 import com.backwishlist.domain.Wishlist;
 import com.backwishlist.infrastructure.database.documents.WishlistDocument;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.mapstruct.Mapper;
 
-@Component
-public class WishlistInfraMapper {
+@Mapper(componentModel = "spring")
+public interface WishlistInfraMapper {
 
-    private final ModelMapper modelMapper;
+    WishlistDocument toDocument(final Wishlist wishlist);
 
-    public WishlistInfraMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
-
-    public WishlistDocument toDocument(Wishlist wishlist) {
-        return modelMapper.map(wishlist, WishlistDocument.class);
-    }
-
-    public Wishlist toDomain(WishlistDocument document) {
-        return modelMapper.map(document, Wishlist.class);
-    }
-
+    Wishlist toDomain(final WishlistDocument document);
 
 }

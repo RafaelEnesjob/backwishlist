@@ -16,7 +16,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Wishlist API - LuizaLabs Case")
                         .version("v1")
-                        .description("API para gerenciamento de listas de desejo de clientes")
+                        .description("API for managing customer wish lists")
                         .contact(new Contact()
                                 .name("Rafael Enes")
                                 .email("rafaelenes19@gmail.com")
@@ -26,6 +26,6 @@ public class OpenApiConfig {
                                 .url("https://opensource.org/licenses/MIT")))
                 .addServersItem(new Server()
                         .url("http://localhost:8080")
-                        .description("Ambiente local"));
+                        .description("Local environment"));
     }
 }
