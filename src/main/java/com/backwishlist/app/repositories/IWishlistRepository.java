@@ -15,7 +15,4 @@ public interface IWishlistRepository {
 
     void deleteByCustomerId(String customerId);
 
-
-    boolean existsByCustomerId(String customerId);
-
 }

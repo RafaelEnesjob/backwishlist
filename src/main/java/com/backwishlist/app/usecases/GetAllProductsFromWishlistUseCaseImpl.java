@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +22,5 @@ public class GetAllProductsFromWishlistUseCaseImpl implements GetAllProductsFrom
         return wishlistRepository.findByCustomerId(customerId)
                 .orElseThrow(() -> new WishlistNotFoundException(customerId));
     }
-
 
 }

@@ -35,11 +35,6 @@ public class MongoWishlistRepository implements IWishlistRepository {
 
 
     @Override
-    public boolean existsByCustomerId(String customerId) {
-        return false;
-    }
-
-    @Override
     public void deleteByCustomerId(final String id) {
         log.info("Removing wishlist by id: {}", id);
         wishListMongoRepository.deleteById(id);

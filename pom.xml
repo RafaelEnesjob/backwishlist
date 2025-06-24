@@ -52,7 +52,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
@@ -76,8 +75,6 @@
             <version>1.6.3</version>
             <scope>provided</scope>
         </dependency>
-
-
     </dependencies>
 
     <build>
@@ -123,11 +120,12 @@
                 <version>0.8.10</version>
                 <configuration>
                     <excludes>
-                        <exclude>com/netshoes/wishlist/config/**</exclude>
-                        <exclude>com/netshoes/wishlist/Application.class</exclude>
+                        <exclude>com/bakcwishlist/config/**</exclude>
+                        <exclude>com/backwishlist/ApiApplication.class</exclude>
                         <exclude>**/*Exception.class</exclude>
+                        <exclude>**/*Response.class</exclude>
                         <exclude>**/*MapperImpl.class</exclude>
-                        <exclude>**/*HandlerExceptionsController.class</exclude>
+                        <exclude>**/*GlobalExceptionHandler.class</exclude>
                         <exclude>**/jsons/**</exclude>
                     </excludes>
                 </configuration>
