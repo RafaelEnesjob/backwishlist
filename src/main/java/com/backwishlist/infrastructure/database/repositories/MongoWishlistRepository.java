@@ -29,15 +29,10 @@ public class MongoWishlistRepository implements IWishlistRepository {
     @Override
     public void save(final Wishlist wishlist) {
         log.info("Persisting customer wishlist: {}", wishlist.getCustomerId());
-        var document = wishlistInfraMapper.toDocument(wishlist);
+        final var document = wishlistInfraMapper.toDocument(wishlist);
         wishListMongoRepository.save(document);
     }
 
-
-    @Override
-    public boolean existsByCustomerId(String customerId) {
-        return false;
-    }
 
     @Override
     public void deleteByCustomerId(final String id) {

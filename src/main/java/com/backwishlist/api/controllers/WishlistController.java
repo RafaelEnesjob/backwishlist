@@ -92,13 +92,13 @@ public class WishlistController {
     })
     @GetMapping("/{customerId}/products")
     public ResponseEntity<WishlistResponse> getWishlistProducts(@PathVariable final String customerId) {
-        Wishlist wishlist = getAllProductsFromWishlistUseCase.execute(customerId);
+        final Wishlist wishlist = getAllProductsFromWishlistUseCase.execute(customerId);
 
-        List<ProductResponse> products = wishlist.getProducts().stream()
-                .map(p -> new ProductResponse(p.getId(), p.getName()))
+        final List<ProductResponse> products = wishlist.getProducts().stream()
+                .map(product -> new ProductResponse(product.getId(), product.getName()))
                 .toList();
 
-        WishlistResponse response = new WishlistResponse(
+        final WishlistResponse response = new WishlistResponse(
                 wishlist.getId(),
                 wishlist.getCustomerId(),
                 products
@@ -117,16 +117,16 @@ public class WishlistController {
             @PathVariable final String customerId,
             @PathVariable final String productId
     ) {
-        Wishlist wishlist = checkProductInWishlistUseCase.execute(customerId, productId);
+        final Wishlist wishlist = checkProductInWishlistUseCase.execute(customerId, productId);
 
         return wishlist.getProducts().stream()
-                .filter(p -> p.getId().equals(productId))
+                .filter(product -> product.getId().equals(productId))
                 .findFirst()
                 .map(product -> {
-                    List<ProductResponse> productResponse = List.of(
+                    final List<ProductResponse> productResponse = List.of(
                             new ProductResponse(product.getId(), product.getName())
                     );
-                    WishlistResponse response = new WishlistResponse(
+                    final WishlistResponse response = new WishlistResponse(
                             wishlist.getId(),
                             wishlist.getCustomerId(),
                             productResponse
@@ -135,9 +135,4 @@ public class WishlistController {
                 })
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-
-
-
-
-
 }

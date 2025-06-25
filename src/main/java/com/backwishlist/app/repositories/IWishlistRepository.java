@@ -7,15 +7,12 @@ import java.util.Optional;
 public interface IWishlistRepository {
 
 
-    Optional<Wishlist> findByCustomerId(String customerId);
+    Optional<Wishlist> findByCustomerId(final String customerId);
 
 
-    void save(Wishlist wishlist);
+    void save(final Wishlist wishlist);
 
 
-    void deleteByCustomerId(String customerId);
-
-
-    boolean existsByCustomerId(String customerId);
+    void deleteByCustomerId(final String customerId);
 
 }
