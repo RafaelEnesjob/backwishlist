@@ -29,7 +29,7 @@ public class MongoWishlistRepository implements IWishlistRepository {
     @Override
     public void save(final Wishlist wishlist) {
         log.info("Persisting customer wishlist: {}", wishlist.getCustomerId());
-        var document = wishlistInfraMapper.toDocument(wishlist);
+        final var document = wishlistInfraMapper.toDocument(wishlist);
         wishListMongoRepository.save(document);
     }
 
