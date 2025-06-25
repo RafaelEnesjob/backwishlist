@@ -1,0 +1,5 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/wishlistdb_test
+      database: wishlistdb_test
