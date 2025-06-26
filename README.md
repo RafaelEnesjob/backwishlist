@@ -386,31 +386,6 @@ Mapper Layer com MapStruct para conversão de entidade ↔ DTO
 🧱 Arquitetura e Organização do Projeto
 Este projeto segue os princípios da Clean Architecture, promovendo uma separação clara entre as regras de negócio (domínio), casos de uso, interfaces de entrada/saída e detalhes de infraestrutura.
 
-
-com.backwishlist
-├── api                    # Camada de entrada da aplicação (Controller REST)
-│   ├── controllers        # Exposição de endpoints via Spring MVC
-│   ├── dtos               # Objetos de transferência (request/response)
-│   └── config             # Configurações globais (ex: OpenAPI)
-│
-├── app                    # Casos de uso e portas de entrada/saída
-│   ├── repositories       # Interface (porta de saída) para persistência
-│   └── usecases           # Regras de negócio (Application Layer)
-│       └── impl           # Implementações dos casos de uso
-│
-├── domain                 # Camada de domínio (Enterprise Business Rules)
-│   ├── exceptions         # Exceções específicas do domínio
-│   ├── Product.java       # Entidade de domínio: Produto
-│   └── Wishlist.java      # Entidade de domínio: Wishlist
-│
-├── infrastructure         # Implementações de detalhes técnicos (Mongo, Mappers)
-│   ├── database           # Implementação de persistência (MongoDB)
-│   │   ├── documents      # Representações do modelo no banco
-│   │   └── repositories   # Interfaces de dados do MongoDB
-│   └── mappers            # Conversores entre entidade e documento com MapStruct
-│
-└── ApiApplication.java    # Classe principal (entrypoint Spring Boot)
-
 ### 🗂️ Estrutura de Pastas do Projeto
 
 ```text
