@@ -209,3 +209,325 @@ curl -X DELETE \
 ```
 ---
 
+### 📥 Endpoint: Buscar todos os produtos da wishlist do cliente
+
+#### Método
+`GET`
+
+#### URL
+`/api/v1/wishlist/{customerId}/products`
+
+---
+
+#### 📄 Descrição
+
+Busca e retorna **todos os produtos** associados à wishlist de um cliente específico.
+
+- Se a wishlist existir e tiver produtos: retorna a lista com todos os produtos.
+- Se a wishlist existir mas estiver vazia: retorna uma lista vazia.
+- Se a wishlist **não existir** para o cliente informado: retorna erro `404`.
+
+---
+
+#### 🔗 Parâmetros de Path
+
+| Parâmetro     | Tipo     | Obrigatório | Descrição              |
+|---------------|----------|-------------|------------------------|
+| `customerId`  | `string` | Sim         | ID do cliente da wishlist |
+
+---
+
+#### 🔄 Exemplo de Resposta (200 OK)
+
+```json
+{
+  "id": "wishlist-1",
+  "customerId": "cliente123",
+  "products": [
+    {
+      "id": "pdt-001",
+      "name": "Tenis Nike"
+    },
+    {
+      "id": "pdt-002",
+      "name": "Tenis Adidas"
+    }
+  ]
+}
+```
+#### 🧪 Exemplo com lista vazia
+
+```json
+{
+  "id": "wishlist-1",
+  "customerId": "cliente123",
+  "products": []
+}
+```
+🧠 Regras de Negócio
+A wishlist deve estar vinculada ao customerId informado.
+
+O retorno pode conter de 0 até 20 produtos.
+
+Se não houver wishlist cadastrada para o cliente, o sistema retorna erro WishlistNotFoundException.
+
+---
+
+#### Erros Possíveis
+
+| Código HTTP | Mensagem de Erro                                         |
+|-------------|----------------------------------------------------------|
+| `404`       | `"Wishlist não encontrada (em caso de inconsistência)."` |
+
+
+#### 🧪 Exemplo de requisição `curl`
+
+```bash
+curl -X GET \
+  http://localhost:8080/api/v1/wishlist/cliente123/products \
+  -H "accept: application/json"
+```
+---
+
+### 🔍 Endpoint: Buscar um produto específico na wishlist
+
+#### Método
+`GET`
+
+#### URL
+`/api/v1/wishlist/{customerId}/products/{productId}`
+
+---
+
+#### 📄 Descrição
+
+Verifica se **um produto específico** está presente na wishlist de um cliente e o retorna.
+
+- Se a wishlist existir e o produto estiver nela, retorna o produto.
+- Se a wishlist não existir ou o produto não estiver presente, retorna erro `404`.
+
+---
+
+#### 🔗 Parâmetros de Path
+
+| Parâmetro     | Tipo     | Obrigatório | Descrição                           |
+|---------------|----------|-------------|-------------------------------------|
+| `customerId`  | `string` | Sim         | ID do cliente da wishlist           |
+| `productId`   | `string` | Sim         | ID do produto a ser consultado      |
+
+---
+
+#### ✅ Exemplo de Resposta (200 OK)
+
+```json
+{
+  "id": "wishlist-1",
+  "customerId": "cliente123",
+  "products": [
+    {
+      "id": "pdt-001",
+      "name": "Echo Dot 5ª geração"
+    }
+  ]
+}
+```
+🧠 Regras de Negócio
+A wishlist deve estar vinculada ao customerId informado.
+
+O produto consultado deve existir dentro da lista de produtos da wishlist.
+
+Caso não exista wishlist ou o produto não esteja presente, o sistema lança a exceção adequada:
+
+WishlistNotFoundException
+
+ProductNotFoundException
+
+---
+#### Erros Possíveis
+
+| Código HTTP | Mensagem de Erro                                       |
+|-------------|--------------------------------------------------------|
+| `404`       | `"Wishlist não encontrada ou produto inexistente"` |
+
+#### 🧪 Exemplo de requisição `curl`
+
+```bash
+curl -X GET \
+  http://localhost:8080/api/v1/wishlist/cliente123/products/pdt-001 \
+  -H "accept: application/json"
+```
+
+---
+
+🧱 Arquitetura da Aplicação
+A aplicação foi construída seguindo os princípios da Clean Architecture, proposta por Robert C. Martin, com foco em:
+
+* Separação de responsabilidades
+
+* Alta coesão e baixo acoplamento
+
+* Independência de frameworks
+
+* Independência de banco de dados
+
+* Testabilidade
+---
+🔹 Padrões aplicados
+DDD (Domain-Driven Design) para modelagem rica de negócio
+
+Builder Pattern com Lombok (@Builder)
+
+Ports & Adapters (Hexagonal) para abstração de dependências externas
+
+Mapper Layer com MapStruct para conversão de entidade ↔ DTO
+
+---
+
+🧱 Arquitetura e Organização do Projeto
+Este projeto segue os princípios da Clean Architecture, promovendo uma separação clara entre as regras de negócio (domínio), casos de uso, interfaces de entrada/saída e detalhes de infraestrutura.
+
+
+com.backwishlist
+├── api                    # Camada de entrada da aplicação (Controller REST)
+│   ├── controllers        # Exposição de endpoints via Spring MVC
+│   ├── dtos               # Objetos de transferência (request/response)
+│   └── config             # Configurações globais (ex: OpenAPI)
+│
+├── app                    # Casos de uso e portas de entrada/saída
+│   ├── repositories       # Interface (porta de saída) para persistência
+│   └── usecases           # Regras de negócio (Application Layer)
+│       └── impl           # Implementações dos casos de uso
+│
+├── domain                 # Camada de domínio (Enterprise Business Rules)
+│   ├── exceptions         # Exceções específicas do domínio
+│   ├── Product.java       # Entidade de domínio: Produto
+│   └── Wishlist.java      # Entidade de domínio: Wishlist
+│
+├── infrastructure         # Implementações de detalhes técnicos (Mongo, Mappers)
+│   ├── database           # Implementação de persistência (MongoDB)
+│   │   ├── documents      # Representações do modelo no banco
+│   │   └── repositories   # Interfaces de dados do MongoDB
+│   └── mappers            # Conversores entre entidade e documento com MapStruct
+│
+└── ApiApplication.java    # Classe principal (entrypoint Spring Boot)
+
+### 🗂️ Estrutura de Pastas do Projeto
+
+```text
+com.backwishlist
+├── api                    # Camada de entrada da aplicação (Controller REST)
+│   ├── controllers        # Exposição de endpoints via Spring MVC
+│   ├── dtos               # Objetos de transferência (request/response)
+│   └── config             # Configurações globais (ex: OpenAPI)
+│
+├── app                    # Casos de uso e portas de entrada/saída
+│   ├── repositories       # Interface (porta de saída) para persistência
+│   └── usecases           # Regras de negócio (Application Layer)
+│       └── impl           # Implementações dos casos de uso
+│
+├── domain                 # Camada de domínio (Enterprise Business Rules)
+│   ├── exceptions         # Exceções específicas do domínio
+│   ├── Product.java       # Entidade de domínio: Produto
+│   └── Wishlist.java      # Entidade de domínio: Wishlist
+│
+├── infrastructure         # Implementações de detalhes técnicos (Mongo, Mappers)
+│   ├── database           # Implementação de persistência (MongoDB)
+│   │   ├── documents      # Representações do modelo no banco
+│   │   └── repositories   # Interfaces de dados do MongoDB
+│   └── mappers            # Conversores entre entidade e documento com MapStruct
+│
+└── ApiApplication.java    # Classe principal (entrypoint Spring Boot)
+```
+---
+
+✅ Boas Práticas Aplicadas
+* Utilização de princípios SOLID
+
+* Organização por camadas independentes
+
+* Classes de teste desacopladas do framework
+
+* Factories e Fixtures para construção de cenários
+
+* Validações e exceções personalizadas
+
+* Uso de record para simplificar DTOs
+
+* Testes com 100% de cobertura (line/branch/instruction) via Jacoco
+
+🔍 Orientação a Objetos
+A modelagem segue forte orientação a objetos:
+
+* O domínio é modelado com comportamento e estado encapsulados (Wishlist, Product)
+
+* Métodos como addProduct, containsProduct, canAddMoreProducts encapsulam regras de negócio
+
+* Exceções são lançadas diretamente do domínio — o comportamento está no lugar certo
+
+🧪 Estratégia de Testes
+🧱 Testes Unitários
+Realizados com JUnit 5, cobrindo:
+
+* Casos positivos e negativos de cada use case
+
+* Comportamentos do domínio (Wishlist, Product)
+
+Regras como:
+
+* Limite de produtos
+
+* Produto duplicado
+
+* Remoção de produtos inexistentes
+
+🔁 Testes Integrados
+Utilizando MockMvc, cobrem:
+
+* Controllers expostos
+
+* Serialização JSON
+
+* Integração com camada de uso
+
+🧬 Testes BDD (Cucumber)
+Especificações comportamentais para todos os casos de uso:
+
+**OBS:** Para rodar esse teste, digite no terminal "mvn clean test"
+
+Este projeto adota a abordagem BDD para testes de comportamento, utilizando Cucumber 7+ com integração ao Spring Boot, e executado via junit-platform.properties, sem necessidade de classe runner.
+
+⚙️ Configuração via junit-platform.properties
+Você optou por não usar uma classe @CucumberTest, então o Cucumber é executado com o seguinte arquivo:
+
+* Features organizadas por responsabilidade
+
+* Steps separados por contexto (AddProduct, RemoveProduct, GetWishlist)
+
+* Execução com perfil de test, banco isolado e MongoTemplate limpo a cada teste
+
+---
+### Exemplo de Fluxo de Uso (Clean Architecture) ###
+
+Controller → UseCase → Domain → Repository (interface) → Infra (MongoRepository)
+
+Exemplo: Adicionar produto à wishlist
+
+* 1 - O controller recebe a requisição e converte para Product.
+
+* 2 - Chama AddProductToWishlistUseCase.
+
+* 3 - A Wishlist é buscada e verificada (existência, duplicidade, limite).
+
+* 4 - Produto é adicionado e lista atualizada.
+
+* 5 - Repository salva o novo estado.
+---
+
+🧩 Pontos de Evolução
+Integração com mensageria (ex: Kafka) para eventos assíncronos
+
+Autenticação com Spring Security e JWT
+
+Deploy automatizado com Docker + CI/CD (ex: GitHub Actions)
+
+Monitoração com Grafana
