@@ -69,7 +69,7 @@ Após iniciar os contêineres, a interface do Mongo Express pode ser acessada em
 
 ```bash
 # Clone este repositório
-git clone https://github.com/leonardodantas/wishlist.git
+git clone https://github.com/RafaelEnesjob/backwishlist
 
 # Tenha o docker compose instalando, acesse a pasta raiz do projeto e execute o seguinte comando
 docker-compose up --build
